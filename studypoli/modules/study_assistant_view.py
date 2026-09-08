@@ -151,21 +151,31 @@ def render_study_assistant_view(dm):
             """, unsafe_allow_html=True)
 
             st.write("")
-            b1, b2 = st.columns(2)
-            with b1:
-                if st.button("▶️ Iniciar Timer Simulado", use_container_width=True):
-                    progress_bar = st.progress(0)
-                    status_placeholder = st.empty()
-                    # Simulação rápida de 5 passos para demonstrar funcionamento
-                    for i in range(1, 101, 20):
-                        time.sleep(0.3)
-                        progress_bar.progress(i)
-                        status_placeholder.text(f"⏳ Estudando focado... ({i}%)")
-                    status_placeholder.success("🎉 Parabéns! Bloco de estudos concluído com sucesso!")
-                    st.balloons()
-            with b2:
-                if st.button("🔄 Resetar", use_container_width=True):
-                    st.toast("Timer resetado.")
+            st.caption("⚠️ Depois de iniciar, mantenha esta aba aberta até o fim — o cronômetro roda em tempo real.")
+
+            if st.button("▶️ Iniciar Timer", use_container_width=True):
+                progress_bar = st.progress(0)
+                countdown_placeholder = st.empty()
+                status_placeholder = st.empty()
+
+                for remaining in range(target_secs, -1, -1):
+                    elapsed_pct = int(((target_secs - remaining) / target_secs) * 100) if target_secs > 0 else 100
+                    mins, secs = divmod(remaining, 60)
+
+                    progress_bar.progress(elapsed_pct)
+                    countdown_placeholder.markdown(f"""
+                    <div style="text-align: center; font-size: 3rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #F8FAFC;">
+                        {mins:02d}:{secs:02d}
+                    </div>
+                    """, unsafe_allow_html=True)
+                    status_placeholder.text("⏳ Estudando focado... mantenha o celular longe!")
+
+                    if remaining > 0:
+                        time.sleep(1)
+
+                progress_bar.progress(100)
+                status_placeholder.success("🎉 Parabéns! Bloco de estudos concluído com sucesso!")
+                st.balloons()
 
     # --- ABA 3: DIAGNÓSTICO INTELIGENTE ---
     with tab_ai_advisor:
@@ -200,9 +210,9 @@ def render_study_assistant_view(dm):
 
         with col_diag1:
             st.markdown("##### 🚨 Principais Pontos de Atenção")
-            if not high_risk_subjects and not urgent_exams:
-                st.success("Tudo sob controle no momento! Suas faltas estão seguras e nenhuma prova iminente nos próximos 14 dias.")
-            
+            if not high_risk_subjects:
+                st.success("Nenhuma matéria em risco no momento! Suas faltas estão seguras e suas médias estão em uma faixa tranquila.")
+
             for s, gs, as_ in high_risk_subjects:
                 st.markdown(f"""
                 <div style="background: rgba(239, 68, 68, 0.12); border-left: 4px solid #EF4444; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px;">
