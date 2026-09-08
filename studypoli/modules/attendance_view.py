@@ -211,7 +211,7 @@ def render_attendance_view(dm):
                     <div class="progress-bar-bg">
                         <div class="progress-bar-fill" style="width: {bar_pct}%; background: {fill_color};"></div>
                     </div>
-                    {alert_box}
+                    {alert_box.strip()}
                 </div>
                 """
                 st.markdown(card_html, unsafe_allow_html=True)
@@ -296,7 +296,7 @@ def render_attendance_view(dm):
             y=70.0,
             line_dash="dash",
             line_color="#EF4444",
-            annotation_text="Mínimo USP: 70%",
+            annotation_text="Mínimo: 70%",
             annotation_position="top right"
         )
 
